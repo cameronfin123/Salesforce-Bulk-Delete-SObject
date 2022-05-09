@@ -3,7 +3,7 @@ Includes apex invocable method that can be called from a flow to bulk delete sOb
 
 ## Post Installation Instructions
 1. Navigate to the desired record
-2. Create a List Button with the following url: {!URLFOR('/flow/Bulk_Delete_SObject?')}
+2. Create a List Button with the following url: {!URLFOR('/flow/Bulk_Delete_SObject')}
 
 ## Install Links
 ## Version 1.1
