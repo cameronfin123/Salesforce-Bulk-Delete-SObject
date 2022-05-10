@@ -1,13 +1,28 @@
 public class BulkDeleteSObject {
     
     @InvocableMethod()
-    public static List<String> DeleteSObject(List<String> s) {
-        if ( s == null || s.size() <= 0 ) {
+    public static List<String> DeleteSObject(List<FlowInputs> inputs ) {
+        if ( inputs == null || inputs.size() <= 0 ) {
             return new List<String>{'No records deleted'};
         }
-        String sObjectIdsList = s.get(0);
-        sObjectIdsList = sObjectIdsList.replace(' ', '');
-        List<String> sObjectIdsAsString = sObjectIdsList.split(',');
+        FlowInputs input = inputs.get(0);
+        String idsString = input.idsString;
+        List<String> idsList = input.idsList;
+        
+        List<String> sObjectIdsAsString = new List<String>();
+        
+        if ( idsString != null && idsString != '' ) {
+            idsString = idsString.replace(' ', '');
+            idsString = idsString.replace('[', '');// remove the opening bracket if it exists
+            idsString = idsString.replace(']', '');// remove the closing bracket if it exists
+            sObjectIdsAsString = idsString.split(',');
+        } else if ( idsList != null && idsList.size() > 0 ) {
+            sObjectIdsAsString = idsList;
+        } else {
+            return new List<String>{'No records deleted'}; 
+        }
+        
+        
         List<SObject> sObjsToDelete = new List<SObject>();
         
         // constructs the query
@@ -50,5 +65,16 @@ public class BulkDeleteSObject {
         }
         
         return retVal;
+    }
+    
+    //input details that comes to apex from flow
+    public class FlowInputs{
+    
+        @InvocableVariable(label='String of Ids' description='Use this if using API 54 or before')
+        public String idsString;
+        
+        @InvocableVariable(label='List of Ids' description='Use this if using API 55 or after')
+        public List<String> idsList;
+        
     }
 }
